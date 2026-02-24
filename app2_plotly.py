@@ -66,14 +66,14 @@ with st.sidebar:
     with col1:
         rt_start = st.number_input("Start", min_value=1, max_value=99,  value=21, step=1)
     with col2:
-        rt_stop  = st.number_input("Stop ①", min_value=2, max_value=100, value=22, step=1)
+        rt_stop  = st.number_input("Stop", min_value=2, max_value=100, value=22, step=1)
 
     st.markdown("### 🎯 Target DOI")
     col3, col4 = st.columns(2)
     with col3:
         doi_start = st.number_input("Start ",  min_value=1,   max_value=364, value=27, step=1)
     with col4:
-        doi_stop  = st.number_input("Stop ②", min_value=2,   max_value=365, value=30, step=1)
+        doi_stop  = st.number_input("Stop", min_value=2,   max_value=365, value=30, step=1)
 
     st.markdown("### 🏭 Capacity Limits")
     daily_cap = st.number_input("Daily SKU Capacity",  min_value=1, value=360,  step=10,
