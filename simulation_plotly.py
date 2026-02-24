@@ -322,7 +322,7 @@ def main():
             'Pct_Days_Over_Capacity': round(r['pct_days_over_capacity'], 2),
             'Capacity_Utilization_Pct': round(r['capacity_utilization'], 2),
             'Total_Orders': int(r['total_orders']),
-            'Avg_DOI': round(r['avg_doi'], 2),
+            'StDev_Daily_SKUs': round(r['std_daily_skus'], 2),
             # Add overload days by day of week
             'Overload_Monday': int(r['overload_by_day'].get('Monday', 0)),
             'Overload_Tuesday': int(r['overload_by_day'].get('Tuesday', 0)),
@@ -444,8 +444,9 @@ def main():
         barmode='group',
         title_text=f'Overload Days by Target DOI — Grouped by Reorder Threshold<br><sup>(Days Exceeding {DAILY_SKU_CAPACITY} SKU Capacity)</sup>',
         title_font_size=16,
-        height=500 * num_thresholds,
-        legend_title_text='Day of Week',
+        height=350 * num_thresholds + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Day of Week'),
+        margin=dict(t=120),
     )
     fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'))
     print("  ✓ Chart 1: Overload Days by DOI (grouped by RT)")
@@ -495,8 +496,9 @@ def main():
         barmode='group',
         title_text='Average SKU Arrivals by Target DOI — Grouped by Reorder Threshold',
         title_font_size=16,
-        height=500 * num_thresholds,
-        legend_title_text='Day of Week',
+        height=350 * num_thresholds + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Day of Week'),
+        margin=dict(t=120),
     )
     fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'))
     print("  ✓ Chart 2: Avg Arrivals by DOI (grouped by RT)")
@@ -541,8 +543,9 @@ def main():
         barmode='group',
         title_text='Daily Arrivals Distribution by DOI — Grouped by Reorder Threshold',
         title_font_size=16,
-        height=500 * num_thresholds,
-        legend_title_text='Arrivals Range',
+        height=350 * num_thresholds + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Arrivals Range'),
+        margin=dict(t=120),
     )
     fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'))
     print("  ✓ Chart 3: Binning Distribution by DOI (grouped by RT)")
@@ -592,8 +595,9 @@ def main():
         barmode='group',
         title_text='Average SKU Arrivals by Reorder Threshold — Grouped by Target DOI',
         title_font_size=16,
-        height=500 * num_dois,
-        legend_title_text='Day of Week',
+        height=350 * num_dois + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Day of Week'),
+        margin=dict(t=120),
     )
     fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'))
     print("  ✓ Chart 4: Avg Arrivals by RT (grouped by DOI)")
@@ -638,8 +642,9 @@ def main():
         barmode='group',
         title_text=f'Overload Days by Reorder Threshold — Grouped by Target DOI<br><sup>(Days Exceeding {DAILY_SKU_CAPACITY} SKU Capacity)</sup>',
         title_font_size=16,
-        height=500 * num_dois,
-        legend_title_text='Day of Week',
+        height=350 * num_dois + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Day of Week'),
+        margin=dict(t=120),
     )
     fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'))
     print("  ✓ Chart 5: Overload Days by RT (grouped by DOI)")
@@ -684,8 +689,9 @@ def main():
         barmode='group',
         title_text='Daily Arrivals Distribution by Reorder Threshold — Grouped by Target DOI',
         title_font_size=16,
-        height=500 * num_dois,
-        legend_title_text='Arrivals Range',
+        height=350 * num_dois + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10, title_text='Arrivals Range'),
+        margin=dict(t=120),
     )
     fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'))
     print("  ✓ Chart 6: Binning Distribution by RT (grouped by DOI)")
@@ -730,7 +736,9 @@ def main():
     fig7.update_layout(
         title_text='Distribution of Daily SKU Arrivals by Target DOI — Grouped by Reorder Threshold<br><sup>(Excluding Sundays)</sup>',
         title_font_size=16,
-        height=500 * num_thresholds,
+        height=350 * num_thresholds + 100,
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5, font_size=10),
+        margin=dict(t=120),
     )
     fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
