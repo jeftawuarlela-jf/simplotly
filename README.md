@@ -189,10 +189,10 @@ Plotly charts are interactive HTML files — the team can zoom, hover for exact 
 
 ## 👤 About
 
-Built by **Jefta Wuarlela** · Business Intelligence Staff
+Built by **Jefta Wuarlela** · Business Intelligence
 
 - 🔗 [LinkedIn](https://linkedin.com/in/jefta-ferdinand-737979220)
-- 📧 [EMAIL_ADDRESS](jefta.wuarlela@gmail.com)
+- 📧 jefta.wuarlela@gmail.com
 - 🗂️ [More projects](https://github.com/jeftawuarlela-jf)
 
 ---
