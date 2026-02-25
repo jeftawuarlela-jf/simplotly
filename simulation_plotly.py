@@ -459,7 +459,6 @@ def main():
     )
     fig1.write_json(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.json'))
     fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'))
-    fig1.write_image(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 1: Overload Days by DOI (grouped by RT)")
     
     # ========================================
@@ -513,7 +512,6 @@ def main():
     )
     fig2.write_json(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.json'))
     fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'))
-    fig2.write_image(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 2: Avg Arrivals by DOI (grouped by RT)")
     
     # ========================================
@@ -562,7 +560,6 @@ def main():
     )
     fig3.write_json(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.json'))
     fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'))
-    fig3.write_image(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 3: Binning Distribution by DOI (grouped by RT)")
     
     # ========================================
@@ -616,7 +613,6 @@ def main():
     )
     fig4.write_json(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.json'))
     fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'))
-    fig4.write_image(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 4: Avg Arrivals by RT (grouped by DOI)")
     
     # ========================================
@@ -665,7 +661,6 @@ def main():
     )
     fig5.write_json(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.json'))
     fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'))
-    fig5.write_image(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 5: Overload Days by RT (grouped by DOI)")
     
     # ========================================
@@ -714,7 +709,6 @@ def main():
     )
     fig6.write_json(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.json'))
     fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'))
-    fig6.write_image(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 6: Binning Distribution by RT (grouped by DOI)")
     
     # ========================================
@@ -762,7 +756,6 @@ def main():
     )
     fig7.write_json(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.json'))
     fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
-    fig7.write_image(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.png'), width=1600, height=None, scale=2)
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
     
     # ========================================
