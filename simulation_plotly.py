@@ -455,6 +455,7 @@ def main():
         title_font_size=16,
         height=500 * num_thresholds,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Day of Week',
     )
     fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'))
@@ -507,6 +508,7 @@ def main():
         title_font_size=16,
         height=500 * num_thresholds,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Day of Week',
     )
     fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'))
@@ -554,6 +556,7 @@ def main():
         title_font_size=16,
         height=500 * num_thresholds,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Arrivals Range',
     )
     fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'))
@@ -606,6 +609,7 @@ def main():
         title_font_size=16,
         height=500 * num_dois,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Day of Week',
     )
     fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'))
@@ -653,6 +657,7 @@ def main():
         title_font_size=16,
         height=500 * num_dois,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Day of Week',
     )
     fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'))
@@ -700,6 +705,7 @@ def main():
         title_font_size=16,
         height=500 * num_dois,
         template='plotly_white',
+        autosize=True,
         legend_title_text='Arrivals Range',
     )
     fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'))
@@ -747,6 +753,7 @@ def main():
         title_font_size=16,
         height=500 * num_thresholds,
         template='plotly_white',
+        autosize=True,
     )
     fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
