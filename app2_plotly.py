@@ -4,7 +4,7 @@ Run with:  streamlit run app2_plotly.py
 """
 
 import streamlit as st
-import streamlit.components.v1 as components
+import plotly.io as pio
 import subprocess
 import sys
 import os
@@ -241,20 +241,17 @@ if run_clicked:
             m3.metric("Capacity Util %",     f"{best_row.get('Capacity_Utilization_Pct', 0):.1f}%")
             m4.metric("Stockout Rate %",     f"{best_row.get('Stockout_Rate_Pct', 0):.2f}%")
 
-    # Interactive Plotly Charts
-    html_files = sorted(glob.glob(os.path.join(out_dir, "*.html")))
-    if html_files:
+    # Interactive Plotly Charts — loaded from JSON for full-width native rendering
+    json_files = sorted(glob.glob(os.path.join(out_dir, "*.json")))
+    if json_files:
         st.markdown("### 📈 Interactive Charts")
-        for html_path in html_files:
-            chart_name = os.path.basename(html_path).replace("_", " ").replace(".html", "").title()
+        for json_path in json_files:
+            chart_name = os.path.basename(json_path).replace("_", " ").replace(".json", "").title()
+            # Strip trailing run_id timestamp from chart name
+            chart_name = " ".join(chart_name.split()[:-1]) if chart_name[-1].isdigit() else chart_name
             with st.expander(f"📊 {chart_name}", expanded=False):
-                with open(html_path, "r", encoding="utf-8") as f:
-                    html_content = f.read()
-                html_content_responsive = html_content.replace(
-                    '<head>',
-                    '<head><style>body, .plotly-graph-div { width: 100% !important; }</style>'
-                )
-                components.html(html_content_responsive, height=800, scrolling=True)
+                fig = pio.read_json(json_path)
+                st.plotly_chart(fig, use_container_width=True)
 
     # ─────────────────────────────────────────────────────────
     # ZIP download
