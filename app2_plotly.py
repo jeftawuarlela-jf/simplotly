@@ -291,8 +291,8 @@ else:
         st.markdown("""
         | Parameter | What it does |
         |---|---|
-        | **RT Start / Stop** | Range of Reorder Threshold values tested. Stop is exclusive — Start=21, Stop=23 tests RT 21 and 22 |
-        | **DOI Start / Stop** | Range of Days-of-Inventory Target tested. Stop is exclusive — Start=27, Stop=30 tests DOI 27, 28, and 29 |
+        | **RT Start / Stop** | Range of Reorder Trigger values tested. |
+        | **DOI Start / Stop** | Range of Days-of-Inventory Target tested. |
         | **Daily SKU Capacity** | Max unique SKUs the inbound can receive in a single day |
         | **Total SKU Capacity** | Total number of unique SKUs the warehouse can hold |
         | **Start / End Date** | The period to simulate |
