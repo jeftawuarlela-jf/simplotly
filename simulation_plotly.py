@@ -458,7 +458,7 @@ def main():
         autosize=True,
         legend_title_text='Day of Week',
     )
-    fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'))
+    fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 1: Overload Days by DOI (grouped by RT)")
     
     # ========================================
@@ -511,7 +511,7 @@ def main():
         autosize=True,
         legend_title_text='Day of Week',
     )
-    fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'))
+    fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 2: Avg Arrivals by DOI (grouped by RT)")
     
     # ========================================
@@ -559,7 +559,7 @@ def main():
         autosize=True,
         legend_title_text='Arrivals Range',
     )
-    fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'))
+    fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 3: Binning Distribution by DOI (grouped by RT)")
     
     # ========================================
@@ -612,7 +612,7 @@ def main():
         autosize=True,
         legend_title_text='Day of Week',
     )
-    fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'))
+    fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 4: Avg Arrivals by RT (grouped by DOI)")
     
     # ========================================
@@ -660,7 +660,7 @@ def main():
         autosize=True,
         legend_title_text='Day of Week',
     )
-    fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'))
+    fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 5: Overload Days by RT (grouped by DOI)")
     
     # ========================================
@@ -708,7 +708,7 @@ def main():
         autosize=True,
         legend_title_text='Arrivals Range',
     )
-    fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'))
+    fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 6: Binning Distribution by RT (grouped by DOI)")
     
     # ========================================
@@ -755,7 +755,7 @@ def main():
         template='plotly_white',
         autosize=True,
     )
-    fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
+    fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'), config={"responsive": True})
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
     
     # ========================================

@@ -250,7 +250,11 @@ if run_clicked:
             with st.expander(f"📊 {chart_name}", expanded=False):
                 with open(html_path, "r", encoding="utf-8") as f:
                     html_content = f.read()
-                components.html(html_content, height=800, scrolling=True)
+                html_content_responsive = html_content.replace(
+                    '<head>',
+                    '<head><style>body, .plotly-graph-div { width: 100% !important; }</style>'
+                )
+                components.html(html_content_responsive, height=800, scrolling=True)
 
     # ─────────────────────────────────────────────────────────
     # ZIP download
