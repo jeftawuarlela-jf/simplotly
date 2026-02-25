@@ -52,7 +52,7 @@ def add_working_days(start_date, working_days):
     while days_added < working_days:
         current_date += timedelta(days=1)
         # Check if it's a weekday (Monday=0, Sunday=6)
-        if current_date.weekday() < 6:  # Monday to Friday
+        if current_date.weekday() < 6:  # Monday to Saturday
             days_added += 1
     
     return current_date
@@ -296,13 +296,13 @@ def main():
         
     # Save detailed results for this scenario
         if SAVE_DETAILED_RESULTS:
-            scenario_filename = f"scenario_RT{reorder_threshold}_DOI{target_doi}_detailed2.csv"
+            scenario_filename = f"scenario_RT{reorder_threshold}_DOI{target_doi}_detailed{run_id}.csv"
             results_df.to_csv(os.path.join(OUTPUT_DIR, scenario_filename), index=False)
             print(f"\n  ✓ Saved: {scenario_filename}")
         
     # Save daily arrivals for this scenario
         if SAVE_DAILY_SUMMARIES:
-            daily_filename = f"scenario_RT{reorder_threshold}_DOI{target_doi}_daily2.csv"
+            daily_filename = f"scenario_RT{reorder_threshold}_DOI{target_doi}_daily{run_id}.csv"
             analysis['daily_arrivals'].to_csv(os.path.join(OUTPUT_DIR, daily_filename), index=False)
         
        
@@ -454,7 +454,7 @@ def main():
         title_text=f'Overload Days by Target DOI — Grouped by Reorder Threshold<br><sup>(Days Exceeding {DAILY_SKU_CAPACITY} SKU Capacity)</sup>',
         title_font_size=16,
         height=500 * num_thresholds,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Day of Week',
     )
     fig1.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_bydoi_grouped_by_rt_{run_id}.html'))
@@ -506,7 +506,7 @@ def main():
         title_text='Average SKU Arrivals by Target DOI — Grouped by Reorder Threshold',
         title_font_size=16,
         height=500 * num_thresholds,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Day of Week',
     )
     fig2.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_bydoi_grouped_by_rt_{run_id}.html'))
@@ -553,7 +553,7 @@ def main():
         title_text='Daily Arrivals Distribution by DOI — Grouped by Reorder Threshold',
         title_font_size=16,
         height=500 * num_thresholds,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Arrivals Range',
     )
     fig3.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_byscenario_{run_id}.html'))
@@ -605,7 +605,7 @@ def main():
         title_text='Average SKU Arrivals by Reorder Threshold — Grouped by Target DOI',
         title_font_size=16,
         height=500 * num_dois,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Day of Week',
     )
     fig4.write_html(os.path.join(OUTPUT_DIR, f'comparison_avg_arrivals_byrt_grouped_by_doi_{run_id}.html'))
@@ -652,7 +652,7 @@ def main():
         title_text=f'Overload Days by Reorder Threshold — Grouped by Target DOI<br><sup>(Days Exceeding {DAILY_SKU_CAPACITY} SKU Capacity)</sup>',
         title_font_size=16,
         height=500 * num_dois,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Day of Week',
     )
     fig5.write_html(os.path.join(OUTPUT_DIR, f'comparison_overload_days_by_rt_grouped_by_doi_{run_id}.html'))
@@ -699,7 +699,7 @@ def main():
         title_text='Daily Arrivals Distribution by Reorder Threshold — Grouped by Target DOI',
         title_font_size=16,
         height=500 * num_dois,
-        autosize=False, width=900,
+        template='plotly_white',
         legend_title_text='Arrivals Range',
     )
     fig6.write_html(os.path.join(OUTPUT_DIR, f'comparison_binning_distribution_by_rt_grouped_by_doi_{run_id}.html'))
@@ -746,7 +746,7 @@ def main():
         title_text='Distribution of Daily SKU Arrivals by Target DOI — Grouped by Reorder Threshold<br><sup>(Excluding Sundays)</sup>',
         title_font_size=16,
         height=500 * num_thresholds,
-        autosize=False, width=900,
+        template='plotly_white',
     )
     fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
