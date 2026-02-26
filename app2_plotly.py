@@ -358,21 +358,50 @@ if run_clicked:
             m3.metric("Capacity Util %",    f"{best_row.get('Capacity_Utilization_Pct', 0):.1f}%")
             m4.metric("Stockout Rate %",    f"{best_row.get('Stockout_Rate_Pct', 0):.2f}%")
 
-    html_files = sorted(glob.glob(os.path.join(out_dir, "*.html")))
-    if html_files:
-        st.markdown("### 📈 Interactive Charts")
-        for html_path in html_files:
-            chart_name = os.path.basename(html_path).replace("_", " ").replace(".html", "").title()
+    # ── Comparison Charts (comparison_*.json) ──
+    comparison_jsons = sorted(glob.glob(os.path.join(out_dir, "comparison_*.json")))
+    if comparison_jsons:
+        st.markdown("### 📈 Scenario Comparison Charts")
+        for json_path in comparison_jsons:
+            chart_name = (os.path.basename(json_path)
+                          .replace("_", " ")
+                          .replace(".json", "")
+                          .title())
+            # Strip trailing run_id timestamp
+            parts = chart_name.split()
+            if parts and parts[-1].isdigit():
+                chart_name = " ".join(parts[:-1])
             with st.expander(f"📊 {chart_name}", expanded=False):
-                with open(html_path, "r", encoding="utf-8") as f:
-                    html_content = f.read()
-                components.html(html_content, height=800, scrolling=True)
+                fig = pio.read_json(json_path)
+                st.plotly_chart(fig, use_container_width=True)
 
+    # ── Calendar Charts (calendar_*.json) ──
+    calendar_jsons = sorted(glob.glob(os.path.join(out_dir, "calendar_*.json")))
+    if calendar_jsons:
+        st.markdown("### 📅 Daily Inbound Calendar")
+        st.caption("Each cell shows one day, colored by the arrival bin it falls into.")
+        for json_path in calendar_jsons:
+            # Extract RT and DOI from filename for a clean label
+            base = os.path.basename(json_path)
+            parts = base.split("_")
+            rt_part  = next((p for p in parts if p.startswith("RT")),  "")
+            doi_part = next((p for p in parts if p.startswith("DOI")), "")
+            label = f"{rt_part} | {doi_part}" if rt_part and doi_part else base
+            with st.expander(f"📅 Calendar — {label}", expanded=False):
+                fig = pio.read_json(json_path)
+                st.plotly_chart(fig, use_container_width=True)
+
+    # ─────────────────────────────────────────────────────────
+    # ZIP download
+    # ─────────────────────────────────────────────────────────
     st.markdown("### ⬇️ Download All Results")
     zip_buffer = io.BytesIO()
+    all_output_files = glob.glob(os.path.join(out_dir, "*"))
+
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-        for fpath in glob.glob(os.path.join(out_dir, "*")):
+        for fpath in all_output_files:
             zf.write(fpath, arcname=os.path.basename(fpath))
+
     zip_buffer.seek(0)
     st.download_button(
         label="📥 Download Results ZIP (CSVs + Charts)",
