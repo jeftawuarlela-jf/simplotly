@@ -116,29 +116,34 @@ def build_merged_df(stock_bytes: bytes, leadtime_bytes: bytes, supplier_bytes: b
     df2 = pd.read_csv(io.BytesIO(leadtime_bytes))
     df3 = pd.read_csv(io.BytesIO(supplier_bytes))
 
-    # Inner join File3 × File2 on (sku_code, supplier) → active lead time per SKU
-    active_lt = df3.merge(
-        df2[["sku_code", "supplier", "lead_time_days"]],
+    # Step 1 — File 2 RIGHT JOIN File 3 on (sku_code + supplier)
+    # File 3 drives the result — every active SKU×supplier is kept.
+    # SKUs in File 3 with no matching entry in File 2 → lead_time_days = NaN (unmatched)
+    # SKUs in File 2 with no active supplier in File 3 → dropped
+    active_lt = df2[["sku_code", "supplier", "lead_time_days"]].merge(
+        df3[["sku_code", "supplier"]],
         on=["sku_code", "supplier"],
-        how="inner",
+        how="right",
     )
 
-    # Left join File1 with active lead times
+    # Step 2 — INNER JOIN active_lt with File 1 on sku_code
+    # Only SKUs that exist in BOTH File 3 AND File 1 proceed.
+    # SKUs in File 3 with no stock data in File 1 → dropped
+    # SKUs in File 1 not listed in File 3 → dropped (no active supplier)
     merged = df1.merge(
         active_lt[["sku_code", "lead_time_days"]],
         on="sku_code",
-        how="left",
+        how="inner",
     )
 
-    # Identify unmatched SKUs
-    unmatched_df = (
-        merged[merged["lead_time_days"].isna()][["sku_code", "product_name"]]
-        .drop_duplicates(subset="sku_code")
+    # Identify unmatched SKUs (in File 3 but no lead time in File 2)
+    unmatched_skus = (
+        merged[merged["lead_time_days"].isna()]["sku_code"]
+        .drop_duplicates()
         .reset_index(drop=True)
     )
-    unmatched_df["lead_time_days"] = 0
 
-    return merged, unmatched_df
+    return merged, unmatched_skus
 
 
 # ─────────────────────────────────────────────────────────────
@@ -198,7 +203,7 @@ merged_df        = None
 if all_files_uploaded:
     with st.spinner("Joining files..."):
         try:
-            merged_df, unmatched_df = build_merged_df(
+            merged_df, unmatched_skus = build_merged_df(
                 file_stock.getvalue(),
                 file_leadtime.getvalue(),
                 file_supplier.getvalue(),
@@ -208,57 +213,53 @@ if all_files_uploaded:
             st.stop()
 
     n_total     = merged_df["sku_code"].nunique()
-    n_unmatched = len(unmatched_df)
+    n_unmatched = len(unmatched_skus)
     n_matched   = n_total - n_unmatched
 
     st.markdown("**Join Results:**")
     jc1, jc2, jc3 = st.columns(3)
     jc1.metric("Total unique SKUs", n_total)
     jc2.metric("✅ Matched",        n_matched,   help="Lead time found via File 2 × File 3")
-    jc3.metric("⚠️ Unmatched",      n_unmatched, help="No lead time found — manual input required")
+    jc3.metric("⚠️ Unmatched",      n_unmatched, help="No lead time in File 2 for their active supplier — a single default will be applied")
 
     if n_unmatched > 0:
         st.warning(
             f"**{n_unmatched} SKU(s) have no lead time.** "
             "Their active supplier (File 3) has no matching entry in the lead time table (File 2). "
             "This is expected when a SKU × supplier combination has no historical data. "
-            "Please enter the lead time manually for each one below."
+            "The lead time below will be applied to all of them."
         )
 
-        edited_unmatched = st.data_editor(
-            unmatched_df,
-            column_config={
-                "sku_code": st.column_config.TextColumn("SKU Code", disabled=True),
-                "product_name": st.column_config.TextColumn("Product Name", disabled=True),
-                "lead_time_days": st.column_config.NumberColumn(
-                    "Lead Time (working days)",
-                    min_value=1, max_value=365, step=1, required=True,
-                    help="Working days from purchase order to warehouse arrival",
-                ),
-            },
-            hide_index=True,
-            use_container_width=True,
-            key="unmatched_editor",
+        # Show the list of affected SKUs so the user knows which ones will use the default
+        with st.expander(f"View {n_unmatched} unmatched SKU(s)", expanded=False):
+            st.dataframe(
+                merged_df[merged_df["lead_time_days"].isna()][["sku_code", "product_name"]]
+                .drop_duplicates(subset="sku_code")
+                .reset_index(drop=True),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+        default_lt = st.number_input(
+            "Default lead time for all unmatched SKUs (working days)",
+            min_value=1,
+            max_value=365,
+            value=14,
+            step=1,
+            help="This value will be applied to every SKU that has no lead time entry in File 2.",
+            key="default_lt_input",
         )
-
-        has_unresolved = bool((edited_unmatched["lead_time_days"] <= 0).any())
-
-        if has_unresolved:
-            st.error("Please fill in a lead time (≥ 1 day) for every SKU in the table above.")
-        else:
-            st.success("✅ All lead times filled. Ready to run.")
+        edited_unmatched = default_lt
+        has_unresolved   = False  # always resolved — user just picks a number
+        st.success(f"✅ {n_unmatched} unmatched SKU(s) will use lead time = **{default_lt} days**. Ready to run.")
     else:
+        edited_unmatched = None
         st.success("✅ All SKUs matched successfully. No manual input needed.")
 
     with st.expander("🔍 Preview merged data (first 20 rows)", expanded=False):
         preview = merged_df.copy()
-        if edited_unmatched is not None:
-            lt_map = dict(zip(edited_unmatched["sku_code"], edited_unmatched["lead_time_days"]))
-            preview["lead_time_days"] = preview.apply(
-                lambda r: lt_map.get(r["sku_code"], r["lead_time_days"])
-                          if pd.isna(r["lead_time_days"]) else r["lead_time_days"],
-                axis=1,
-            )
+        if isinstance(edited_unmatched, int) or isinstance(edited_unmatched, float):
+            preview["lead_time_days"] = preview["lead_time_days"].fillna(edited_unmatched)
         st.dataframe(preview.head(20), use_container_width=True, hide_index=True)
 
 else:
@@ -281,13 +282,9 @@ if run_clicked:
     # Build final CSV with all lead times resolved
     final_df = merged_df.copy()
 
-    if edited_unmatched is not None and len(edited_unmatched) > 0:
-        lt_map = dict(zip(edited_unmatched["sku_code"], edited_unmatched["lead_time_days"]))
-        final_df["lead_time_days"] = final_df.apply(
-            lambda r: lt_map.get(r["sku_code"], r["lead_time_days"])
-                      if pd.isna(r["lead_time_days"]) else r["lead_time_days"],
-            axis=1,
-        )
+    if isinstance(edited_unmatched, (int, float)) and edited_unmatched > 0:
+        # Apply the single default lead time to all unmatched SKUs
+        final_df["lead_time_days"] = final_df["lead_time_days"].fillna(edited_unmatched)
 
     if final_df["lead_time_days"].isna().any():
         st.error("Some SKUs still have no lead time. Please fill in all values and try again.")
