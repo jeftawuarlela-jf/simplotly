@@ -76,11 +76,11 @@ def run_single_simulation(sku_info, reorder_threshold, target_doi, date_range):
         sku_code = sku_row['sku_code']
         product_name = sku_row['product_name']
         stock = sku_row['stock']
-        qpd = sku_row['qpd']
+        quantity_sold_per_day = sku_row['quantity_sold_per_day']
         lead_time_days = int(sku_row['lead_time_days'])
         
         # Skip SKUs with no sales
-        if qpd == 0 or pd.isna(qpd):
+        if quantity_sold_per_day == 0 or pd.isna(quantity_sold_per_day):
             continue
         
         # Track orders in transit: list of (arrival_date, quantity)
@@ -99,11 +99,11 @@ def run_single_simulation(sku_info, reorder_threshold, target_doi, date_range):
             orders_in_transit = [order for order in orders_in_transit if order[0] != date]
             
             # Daily sales
-            sales = qpd
+            sales = quantity_sold_per_day
             stock -= sales
             
             # Calculate DOI
-            doi = stock / qpd if qpd > 0 else 999
+            doi = stock / quantity_sold_per_day if quantity_sold_per_day > 0 else 999
             
             # Calculate total orders in transit
             total_in_transit = sum([order[1] for order in orders_in_transit])
@@ -117,7 +117,7 @@ def run_single_simulation(sku_info, reorder_threshold, target_doi, date_range):
             if reorder_trigger:
                 # Calculate order quantity to reach target DOI after lead time
                 estimated_calendar_days = lead_time_days * 1.17
-                order_quantity = (target_doi + estimated_calendar_days) * qpd - stock
+                order_quantity = (target_doi + estimated_calendar_days) * quantity_sold_per_day - stock
                 
                 # Only place order if quantity is positive
                 if order_quantity > 0:
@@ -259,7 +259,7 @@ def main():
     sku_info = starting_data.groupby('sku_code').agg({
         'product_name': 'first',
         'stock': 'first',
-        'qpd': 'first',
+        'quantity_sold_per_day': 'first',
         'doi': 'first',
         'lead_time_days': 'first'
     }).reset_index()

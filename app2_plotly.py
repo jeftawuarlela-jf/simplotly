@@ -55,7 +55,7 @@ with st.sidebar:
 
     st.markdown("### 📁 File 1 — Stock & Sales")
     file_stock = st.file_uploader(
-        "sku_code · product_name · tanggal_update · stock · qpd · doi",
+        "sku_code · product_name · tanggal_update · stock · quantity_sold_per_day · doi",
         type=["csv"], key="file_stock",
     )
 
@@ -428,7 +428,7 @@ else:
         st.markdown("""
         | File | Required Columns | Notes |
         |---|---|---|
-        | **File 1 — Stock & Sales** | `sku_code`, `product_name`, `tanggal_update`, `stock`, `qpd`, `doi` | One row per SKU per date |
+        | **File 1 — Stock & Sales** | `sku_code`, `product_name`, `tanggal_update`, `stock`, `quantity_sold_per_day`, `doi` | One row per SKU per date |
         | **File 2 — Lead Times** | `sku_code`, `supplier`, `lead_time_days` | One SKU can have multiple suppliers |
         | **File 3 — Active Supplier** | `sku_code`, `supplier` | One row per SKU — the currently active supplier |
 
