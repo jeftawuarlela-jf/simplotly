@@ -249,12 +249,11 @@ def main():
     
     
     # Prepare starting inventory
-    print("\nPreparing starting inventory (July 1, 2025)...")
-    july_1 = datetime(2025, 7, 1)
-    starting_data = df[df['tanggal_update'] == july_1].copy()
-    
+    print(f"\nPreparing starting inventory from: {START_DATE.date()}...")
+    starting_data = df[df['tanggal_update'] == START_DATE].copy()
+
     if len(starting_data) == 0:
-        print(f"Warning: No data for July 1, using first available date: {df['tanggal_update'].min()}")
+        print(f"Warning: No data for {START_DATE.date()}, using first available date: {df['tanggal_update'].min().date()}")
         starting_data = df[df['tanggal_update'] == df['tanggal_update'].min()].copy()
     
     sku_info = starting_data.groupby('sku_code').agg({
@@ -758,6 +757,138 @@ def main():
     fig7.write_html(os.path.join(OUTPUT_DIR, f'comparison_boxplot_arrivals_{run_id}.html'))
     print("  ✓ Chart 7: Boxplot of Daily Arrivals (grouped by RT)")
     
+    # ========================================
+    # CHART 8: Calendar Heatmap — one per scenario
+    # Each day is colored by its inbound SKU bin category
+    # ========================================
+
+    # Bin order and discrete colors (matches other charts)
+    bin_order = ['0-30', '31-90', '91-180', '181-270', '271-360', '361-540', '541-720', '720+', 'Sunday']
+    bin_display_colors = {
+        **bin_color_map,
+        'Sunday':  '#eeeeee',
+    }
+
+    bins_edges  = [0, 30, 90, 180, 270, 360, 540, 720, float('inf')]
+
+    def get_bin_label(value, is_sunday=False):
+        if is_sunday:
+            return 'Sunday'
+        for i in range(len(bins_edges) - 1):
+            if bins_edges[i] < value <= bins_edges[i + 1]:
+                return bin_labels[i]
+        if value == 0:
+            return '0-30'
+        return '720+'
+
+    day_abbr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+    for scenario in all_scenario_results:
+        rt  = scenario['reorder_threshold']
+        doi = scenario['target_doi']
+        daily = scenario['daily_arrivals'].copy()
+        daily['date'] = pd.to_datetime(daily['date'])
+
+        # Compute calendar coordinates
+        min_date = daily['date'].min()
+        # Start from Monday of the first week
+        start_monday = min_date - pd.Timedelta(days=min_date.weekday())
+
+        daily['weekday']    = daily['date'].dt.weekday          # 0=Mon … 6=Sun
+        daily['week_num']   = ((daily['date'] - start_monday).dt.days // 7)
+        daily['is_sunday']  = daily['weekday'] == 6
+        daily['bin_label']  = daily.apply(
+            lambda row: get_bin_label(row['unique_skus_arrived'], row['is_sunday']), axis=1
+        )
+
+        num_weeks = daily['week_num'].max() + 1
+
+        # Build one scatter trace per bin so legend works cleanly
+        fig_cal = go.Figure()
+
+        for bin_label_val in bin_order:
+            subset = daily[daily['bin_label'] == bin_label_val]
+            if subset.empty:
+                continue
+
+            hover_texts = subset.apply(
+                lambda r: (
+                    f"<b>{r['date'].strftime('%a, %d %b %Y')}</b><br>"
+                    f"Inbound SKUs: {int(r['unique_skus_arrived'])}<br>"
+                    f"Bin: {r['bin_label']}"
+                ), axis=1
+            )
+
+            fig_cal.add_trace(go.Scatter(
+                x=subset['weekday'],
+                y=subset['week_num'],
+                mode='markers+text',
+                name=bin_label_val,
+                marker=dict(
+                    symbol='square',
+                    size=28,
+                    color=bin_display_colors[bin_label_val],
+                    line=dict(color='white', width=1)
+                ),
+                text=subset['date'].dt.strftime('%-d'),
+                textposition='middle center',
+                textfont=dict(size=9, color='white'),
+                hovertext=hover_texts,
+                hoverinfo='text',
+                legendgroup=bin_label_val,
+            ))
+
+        # Month labels — place at the first occurrence of each month
+        month_labels = []
+        seen_months  = set()
+        for _, row in daily.sort_values('date').iterrows():
+            m_key = (row['date'].year, row['date'].month)
+            if m_key not in seen_months:
+                seen_months.add(m_key)
+                month_labels.append(dict(
+                    x=-0.9,
+                    y=row['week_num'],
+                    text=row['date'].strftime('%b %Y'),
+                    showarrow=False,
+                    font=dict(size=10, color='#444'),
+                    xanchor='right'
+                ))
+
+        fig_cal.update_layout(
+            title_text=(
+                f'Daily Inbound SKU Calendar — RT {rt} | DOI {doi}<br>'
+                f'<sup>Each cell = one day, colored by arrival bin (Sundays excluded from binning)</sup>'
+            ),
+            title_font_size=15,
+            autosize=True,
+            height=max(400, 60 * num_weeks + 120),
+            xaxis=dict(
+                tickmode='array',
+                tickvals=list(range(7)),
+                ticktext=day_abbr,
+                side='top',
+                showgrid=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                autorange='reversed',
+                showticklabels=False,
+                showgrid=False,
+                zeroline=False,
+            ),
+            annotations=month_labels,
+            plot_bgcolor='#f9f9f9',
+            legend_title_text='Arrivals Bin',
+            margin=dict(l=80, r=20, t=100, b=20),
+            template='plotly_white',
+        )
+
+        fig_cal.write_json(os.path.join(OUTPUT_DIR,
+            f'calendar_inbound_RT{rt}_DOI{doi}_{run_id}.json'))
+        fig_cal.write_html(os.path.join(OUTPUT_DIR,
+            f'calendar_inbound_RT{rt}_DOI{doi}_{run_id}.html'))
+        print(f"  ✓ Calendar chart: RT {rt} DOI {doi}")
+
     # ========================================
     # SUMMARY
     # ========================================
