@@ -114,15 +114,22 @@ def build_merged_df(stock_bytes: bytes, leadtime_bytes: bytes, supplier_bytes: b
     df2 = pd.read_csv(io.BytesIO(leadtime_bytes))
     df3 = pd.read_csv(io.BytesIO(supplier_bytes))
 
-    # Step 1 — File 2 RIGHT JOIN File 3 on (sku_code + supplier)
+    # Step 1 — File 2 RIGHT JOIN File 3 on (sku_code + supplier)  [case-insensitive]
     # File 3 drives the result — every active SKU×supplier is kept.
     # SKUs in File 3 with no matching entry in File 2 → lead_time_days = NaN (unmatched)
     # SKUs in File 2 with no active supplier in File 3 → dropped
-    active_lt = df2[["sku_code", "supplier", "lead_time_days"]].merge(
-        df3[["sku_code", "supplier"]],
-        on=["sku_code", "supplier"],
+    df2_join = df2[["sku_code", "supplier", "lead_time_days"]].copy()
+    df3_join = df3[["sku_code", "supplier"]].copy()
+    df2_join["_sku_lower"] = df2_join["sku_code"].str.lower().str.strip()
+    df2_join["_sup_lower"] = df2_join["supplier"].str.lower().str.strip()
+    df3_join["_sku_lower"] = df3_join["sku_code"].str.lower().str.strip()
+    df3_join["_sup_lower"] = df3_join["supplier"].str.lower().str.strip()
+
+    active_lt = df2_join[["_sku_lower", "_sup_lower", "lead_time_days"]].merge(
+        df3_join[["sku_code", "supplier", "_sku_lower", "_sup_lower"]],
+        on=["_sku_lower", "_sup_lower"],
         how="right",
-    )
+    ).drop(columns=["_sku_lower", "_sup_lower"])
 
     # Step 2 — INNER JOIN active_lt with File 1 on sku_code
     # Only SKUs that exist in BOTH File 3 AND File 1 proceed.
