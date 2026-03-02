@@ -239,7 +239,7 @@ if all_files_uploaded:
         # Show the list of affected SKUs so the user knows which ones will use the default
         with st.expander(f"View {n_unmatched} unmatched SKU(s)", expanded=False):
             st.dataframe(
-                merged_df[merged_df["lead_time_days"].isna()][["sku_code", "product_name","package","supplier"]]
+                merged_df[merged_df["lead_time_days"].isna()][["sku_code", "product_name","package"]]
                 .drop_duplicates(subset="sku_code")
                 .reset_index(drop=True),
                 use_container_width=True,
