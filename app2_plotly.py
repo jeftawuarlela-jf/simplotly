@@ -55,7 +55,7 @@ with st.sidebar:
 
     st.markdown("### 📁 File 1 — Stock & Sales")
     file_stock = st.file_uploader(
-        "sku_code · product_name · tanggal_update · stock · quantity_sold_per_day · doi",
+        "tanggal_update · sku_code · product_name · package · stock · quantity_sold_per_day · doi",
         type=["csv"], key="file_stock",
     )
 
