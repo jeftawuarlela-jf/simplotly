@@ -136,7 +136,7 @@ def build_merged_df(stock_bytes: bytes, leadtime_bytes: bytes, supplier_bytes: b
     # SKUs in File 3 with no stock data in File 1 → dropped
     # SKUs in File 1 not listed in File 3 → dropped (no active supplier)
     merged = df1.merge(
-        active_lt[["sku_code", "lead_time_days"]],
+        active_lt[["sku_code", "supplier", "lead_time_days"]],
         on="sku_code",
         how="inner",
     )
@@ -239,7 +239,7 @@ if all_files_uploaded:
         # Show the list of affected SKUs so the user knows which ones will use the default
         with st.expander(f"View {n_unmatched} unmatched SKU(s)", expanded=False):
             st.dataframe(
-                merged_df[merged_df["lead_time_days"].isna()][["sku_code", "product_name","package"]]
+                merged_df[merged_df["lead_time_days"].isna()][["sku_code", "product_name","package","supplier"]]
                 .drop_duplicates(subset="sku_code")
                 .reset_index(drop=True),
                 use_container_width=True,
