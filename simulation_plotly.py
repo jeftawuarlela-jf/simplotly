@@ -392,8 +392,8 @@ def main():
         '0-30':    '#2d9a2d',   # dark green  — very safe
         '31-90':   '#4caf50',   # green        — safe
         '91-180':  '#7bc67e',   # light green  — comfortable
-        '181-270': '#ffffe0',   # pale green   — moderate
-        '271-360': '#ffff00',   # very light green — near capacity
+        '181-270': '#ffff00',   # pale green   — moderate
+        '271-360': '#ffcc80',   # very light green — near capacity
         '361-540': '#ff9800',   # orange       — over capacity
         '541-720': '#f44336',   # red          — high danger
         '720+':    '#b71c1c',   # dark red     — critical
