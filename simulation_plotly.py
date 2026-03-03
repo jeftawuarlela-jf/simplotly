@@ -253,7 +253,6 @@ def main():
     starting_data = df[df['tanggal_update'] == START_DATE].copy()
 
     if len(starting_data) == 0:
-        print(f"Warning: No data for {START_DATE.date()}, using first available date: {df['tanggal_update'].min().date()}")
         starting_data = df[df['tanggal_update'] == df['tanggal_update'].min()].copy()
     
     sku_info = starting_data.groupby('sku_code').agg({
@@ -388,8 +387,17 @@ def main():
     doi_color_map = {doi: doi_colors_list[i] for i, doi in enumerate(target_dois)}
     
     bin_labels = ['0-30', '31-90', '91-180', '181-270', '271-360', '361-540', '541-720', '720+']
-    bin_colors_list = px.colors.qualitative.T10[:len(bin_labels)]
-    bin_color_map = {bl: bin_colors_list[i] for i, bl in enumerate(bin_labels)}
+    # Safety-based colors: green shades for bins under capacity, orange-to-red for over capacity
+    bin_color_map = {
+        '0-30':    '#2d9a2d',   # dark green  — very safe
+        '31-90':   '#4caf50',   # green        — safe
+        '91-180':  '#7bc67e',   # light green  — comfortable
+        '181-270': '#a8d5a2',   # pale green   — moderate
+        '271-360': '#c8e6c9',   # very light green — near capacity
+        '361-540': '#ff9800',   # orange       — over capacity
+        '541-720': '#f44336',   # red          — high danger
+        '720+':    '#b71c1c',   # dark red     — critical
+    }
     
     # Global y-max values for consistent scaling
     all_avg_values = [r['avg_arrivals_by_day'].get(d, 0) for r in all_scenario_results for d in day_order]
@@ -762,7 +770,7 @@ def main():
     # Each day is colored by its inbound SKU bin category
     # ========================================
 
-    # Bin order and discrete colors (matches other charts)
+    # Bin order and discrete colors (matches other charts — safety-based)
     bin_order = ['0-30', '31-90', '91-180', '181-270', '271-360', '361-540', '541-720', '720+', 'Sunday']
     bin_display_colors = {
         **bin_color_map,
