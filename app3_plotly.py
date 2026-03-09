@@ -70,9 +70,89 @@ st.markdown("""
     button[kind="primary"] { background-color: var(--swipe-green) !important; color: white !important; border: none !important; }
     button[kind="primary"]:hover { background-color: var(--swipe-blue) !important; }
     button[kind="primary"] * { color: white !important; }
+    /* Number inputs & Date inputs */
+    input[type="number"], input[type="text"] {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid #e0e6ef !important;
+    border-radius: 6px !important;
+    }
+
+    /* The +/- stepper buttons */
+    button[data-testid="stNumberInputStepDown"],
+    button[data-testid="stNumberInputStepUp"] {
+        background-color: var(--swipe-green) !important;
+        color: var(--swipe-green) !important;
+    }
+
+    /* File Uploader Box */
+    [data-testid="stFileUploader"] {
+        background-color: #ffffff !important;
+        border: 2px dashed var(--swipe-green) !important;
+        border-radius: 10px !important;
+        padding: 0.5rem !important;
+    }
+
+    /* The inner drop zone area */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: #f0faf5 !important;
+        border-radius: 8px !important;
+    }
+
+    /* "Drag and drop" text */
+    [data-testid="stFileUploaderDropzoneInstructions"] p,
+    [data-testid="stFileUploaderDropzoneInstructions"] small {
+        color: #1e293b !important;
+    }
+
+    /* "Limit 200MB" text */
+    [data-testid="stFileUploaderDropzone"] small {
+        color: #64748b !important;
+    }
+
+    /* Browse Files button */
+    [data-testid="stFileUploaderDropzone"] button {
+        background-color: var(--swipe-green) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
+    }
+
+    [data-testid="stFileUploaderDropzone"] button:hover {
+        background-color: var(--swipe-blue) !important;
+    }
+
+    [data-testid="stFileUploaderDropzone"] button * {
+        color: white !important;
+    }
+        /* Number input container */
+    [data-testid="stNumberInput"] input {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+    
+    /* Step buttons (+ and -) */
+    [data-testid="stNumberInputStepUp"],
+    [data-testid="stNumberInputStepDown"] {
+        background-color: var(--swipe-green) !important;
+        border: 1px solid var(--swipe-green) !important;
+    }
+    
+    /* The arrow icons inside the buttons */
+    [data-testid="stNumberInputStepUp"] svg,
+    [data-testid="stNumberInputStepDown"] svg {
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+        color: #ffffff !important;
+    }
+    
+    [data-testid="stNumberInputStepUp"]:hover,
+    [data-testid="stNumberInputStepDown"]:hover {
+        background-color: var(--swipe-blue) !important;
+}
+    
 </style>
 """, unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────────────────────
 # Sidebar
 # ─────────────────────────────────────────────────────────────
@@ -510,3 +590,4 @@ else:
         | **Total SKU Capacity** | Total unique SKUs the warehouse can hold |
         | **Start / End Date** | The simulation reporting period |
         """)
+
